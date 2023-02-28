@@ -1,1 +1,1 @@
-# -ollection-of-english-words
+# -Сollection-of-english-words
