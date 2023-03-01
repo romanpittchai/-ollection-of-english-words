@@ -3,7 +3,7 @@ from tkinter import (Frame, Menu, Text, Scrollbar,
                      filedialog, messagebox, Tk, BooleanVar)
 
 from main_logic import connect_sql
-from write_or_read_db import write_db_file, write_db_consol
+from write_or_read_db import write_db_file, write_db_consol, read_db, read_db_for_rus
 
 
 class TextEditor(Frame):
@@ -13,7 +13,7 @@ class TextEditor(Frame):
     
     def up_menu(self) -> None:
         """ Basic widgets. """
-        self.master.title("Simply text editor")
+        self.master.title("SimplyApp")
         main_menu = Menu(self)
         self.master.config(menu=main_menu)
         file_menu = Menu(main_menu, tearoff=0)
@@ -109,11 +109,36 @@ class TextEditor(Frame):
             else:
                 write_db_consol(keys[2], list_data)
         
+        def read_db_eng():
+            """Чтение из БД аглицких словес."""
+            list_from_bd: list = read_db()
+            index_cursor = self.txt_notes.index('insert')
+            self.txt_notes.insert(index_cursor, list_from_bd)
+            index_cursor = self.txt_notes.index('insert')
+            self.txt_notes.insert(index_cursor, '\n')
+            
+        def read_db_rus():
+            """Чтение из БД русских слов."""
+            list_from_bd: list = read_db_for_rus()
+            if len(list_from_bd) == 0:
+                pass
+            else:
+                index_cursor = self.txt_notes.index('insert')
+                self.txt_notes.insert(index_cursor, list_from_bd)
+                index_cursor = self.txt_notes.index('insert')
+                self.txt_notes.insert(index_cursor, '\n')
+            
+            
+            
         buttonFrame = Frame(self.master)
         buttonFrame.pack(fill = tk.Y, ipadx = 5, ipady = 5)
-        self.btn_sub_1 = tk.Button(master = buttonFrame, text = "Read BD(eng)");
+        self.btn_sub_1 = tk.Button(master = buttonFrame,
+                                   text = "Read BD(eng)",
+                                   command = read_db_eng);
         self.btn_sub_1.pack(side = tk.RIGHT, ipadx = 20);
-        self.btn_sub_2 = tk.Button(master = buttonFrame, text = "Read BD(rus)");
+        self.btn_sub_2 = tk.Button(master = buttonFrame,
+                                   text = "Read BD(rus)",
+                                   command = read_db_rus);
         self.btn_sub_2.pack(side = tk.RIGHT, ipadx = 20);
         self.btn_sub_3 = tk.Button(master = buttonFrame,
                                    text = "Write BD(text)",
@@ -137,6 +162,7 @@ class TextEditor(Frame):
                 self.btn_sub_2.configure(state=tk.DISABLED)
                 self.btn_sub_3.configure(state=tk.NORMAL)
                 self.btn_sub_4.configure(state=tk.NORMAL)
+                self.btn_sub_clear.configure(state=tk.DISABLED)
             else:
                 self.ck_box_2.configure(state=tk.NORMAL)
                 self.ck_box_3.configure(state=tk.NORMAL)
@@ -144,6 +170,7 @@ class TextEditor(Frame):
                 self.btn_sub_2.configure(state=tk.NORMAL)
                 self.btn_sub_3.configure(state=tk.DISABLED)
                 self.btn_sub_4.configure(state=tk.DISABLED)
+                self.btn_sub_clear.configure(state=tk.NORMAL)
         
         def ckbox_verbs():
             """docstring"""
@@ -156,6 +183,7 @@ class TextEditor(Frame):
                 self.btn_sub_2.configure(state=tk.DISABLED)
                 self.btn_sub_3.configure(state=tk.NORMAL)
                 self.btn_sub_4.configure(state=tk.NORMAL)
+                self.btn_sub_clear.configure(state=tk.DISABLED)
             else:
                 self.ck_box_1.configure(state=tk.NORMAL)
                 self.ck_box_3.configure(state=tk.NORMAL)
@@ -163,6 +191,7 @@ class TextEditor(Frame):
                 self.btn_sub_2.configure(state=tk.NORMAL)
                 self.btn_sub_3.configure(state=tk.DISABLED)
                 self.btn_sub_4.configure(state=tk.DISABLED)
+                self.btn_sub_clear.configure(state=tk.NORMAL)
                 
         def ckbox_nouns():
             """docstring"""
@@ -174,6 +203,7 @@ class TextEditor(Frame):
                 self.btn_sub_2.configure(state=tk.DISABLED)
                 self.btn_sub_3.configure(state=tk.NORMAL)
                 self.btn_sub_4.configure(state=tk.NORMAL)
+                self.btn_sub_clear.configure(state=tk.DISABLED)
             else:
                 self.ck_box_1.configure(state=tk.NORMAL)
                 self.ck_box_2.configure(state=tk.NORMAL)
@@ -181,16 +211,20 @@ class TextEditor(Frame):
                 self.btn_sub_2.configure(state=tk.NORMAL)
                 self.btn_sub_3.configure(state=tk.DISABLED)
                 self.btn_sub_4.configure(state=tk.DISABLED)
-        
-        self.ck_box_1 = tk.Checkbutton(master = chBoxFrame, text = "adjectives",
+                self.btn_sub_clear.configure(state=tk.NORMAL)
+                
+        self.ck_box_1 = tk.Checkbutton(master = chBoxFrame,
+                                       text = "adjectives",
                                        command = ckbox_adjectives,
                                        variable = true_adj)
         self.ck_box_1.pack(side = tk.RIGHT, ipadx = 20);
-        self.ck_box_2 = tk.Checkbutton(master = chBoxFrame, text = "verbs",
+        self.ck_box_2 = tk.Checkbutton(master = chBoxFrame,
+                                       text = "verbs",
                                        command = ckbox_verbs,
                                        variable = true_ver)
         self.ck_box_2.pack(side = tk.RIGHT, ipadx = 20);
-        self.ck_box_3 = tk.Checkbutton(master = chBoxFrame, text = "nouns",
+        self.ck_box_3 = tk.Checkbutton(master = chBoxFrame,
+                                       text = "nouns",
                                        command = ckbox_nouns,
                                        variable = true_noun)
         self.ck_box_3.pack(side = tk.RIGHT, ipadx = 20);
@@ -207,6 +241,17 @@ class TextEditor(Frame):
                 self.btn_sub_3.configure(state=tk.DISABLED)
                 self.btn_sub_4.configure(state=tk.DISABLED)
         check_chbox()
+        
+        def clear():
+            """Очистить текст."""
+            self.txt_notes.delete("1.0", "end-1c")
+            
+        buttonFrameTwo = Frame(self.master)
+        buttonFrameTwo.pack(fill = tk.Y, ipadx = 5, ipady = 5)
+        self.btn_sub_clear = tk.Button(master = buttonFrameTwo,
+                                   text = "Clear",
+                                   command = clear);
+        self.btn_sub_clear.pack(side = tk.RIGHT, ipadx = 20);
         
         def key_non_shift(event):
             """docstring"""
@@ -241,7 +286,7 @@ class TextEditor(Frame):
 
     def exit_from_editor(self) -> None:
         """ Exiting the application. """
-        self.master.title("Simply text editor - closing")
+        self.master.title("SimplyApp - closing")
         self.master.destroy()
 
     def info(self):
@@ -254,7 +299,7 @@ class TextEditor(Frame):
         """ Selecting and opening a file. """
         self.filepath_open = (filedialog.askopenfilename
                               (filetypes=self.filetypes, defaultextension=''))
-        self.master.title(f"Simply text editor - {self.filepath_open}")
+        self.master.title(f"SimplyApp - {self.filepath_open}")
         if self.filepath_open:
             with open(self.filepath_open, "r") as outFile:
                 self.txt_notes.delete("1.0", "end-1c")
@@ -281,7 +326,7 @@ class TextEditor(Frame):
             if flag:
                 self.save_as_file()
             self.txt_notes.delete("1.0", "end-1c")
-        self.master.title("Simply text editor - New")
+        self.master.title("SimplyApp - New")
 
     def save_as_file(self) -> None:
         """ The 'save as...' function. """
@@ -289,7 +334,7 @@ class TextEditor(Frame):
                               (filetypes=self.filetypes,
                                defaultextension='initialfile'))
         if self.filepath_open:
-            self.master.title(f"Simply text editor - {self.filepath_open}")
+            self.master.title(f"SimplyApp - {self.filepath_open}")
             with open(self.filepath_open, "w") as inFile:
                 inFile.write(self.txt_notes.get("1.0", "end-1c"))
                 inFile.close()
@@ -297,7 +342,7 @@ class TextEditor(Frame):
     def save_file(self) -> None:
         """ The 'save' function. """
         if self.filepath_open:
-            self.master.title(f"Simply text editor - {self.filepath_open}")
+            self.master.title(f"SimplyApp - {self.filepath_open}")
             with open(self.filepath_open, "w") as outInfile:
                 outInfile.write(self.txt_notes.get("1.0", "end-1c"))
                 outInfile.close()

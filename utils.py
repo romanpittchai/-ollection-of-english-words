@@ -17,9 +17,5 @@ def create_db() -> None:
         cur.execute(f'CREATE TABLE {key} ({column_eng} NOT NULL, {column_rus} NOT NULL)')
     con.close()
 
-bol_list: list = list()
-
-    
-		
     
     

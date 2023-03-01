@@ -58,11 +58,12 @@ def write_db_file(value):
     cur.executemany(f'INSERT INTO {value} values (?, ?)', data)
     con.commit()
     con.close()
-
+    info_for_db()
         
-    
+cur_obj_rus: list = list()
+
 def read_db():
-    """Чтение БД."""
+    """Чтение БД для английских слов."""
     name_tab: list = list()
     count_wr_tab: dict = {}
     con = sqlite3.connect("engDB.db")
@@ -75,31 +76,24 @@ def read_db():
         cur.execute(f'SELECT Count(*) FROM {value}')
         obj_count_tab = cur.fetchall()
         count_wr_tab[value] = obj_count_tab[0][0]
-    print('+ если хотите eng.')
-    print('- если хотите перевод(после того, как вызвали eng).')
-    print('## если хотите закончить.')
     word_list: list = list()
-    cur_obj_rus: list = list()
-    while True:
-        var: str = input('-> ')
-        if var == '+':
-            cur_obj_rus.clear()
-            ran: int = 0
-            for key, value in count_wr_tab.items():
-                ran = random.randint(1, value)
-                cur.execute(f'SELECT * FROM {key} WHERE rowid = {ran}')
-                cur_obj = cur.fetchall()
-                cur_obj_rus.append(cur_obj[0])
-                for v in cur_obj:
-                    word_list.append(v[0])
-            print(*word_list)
-            word_list.clear()
-        elif var == '-': # Проверку на то что уже вызвали eng и выводили 1 раз перевод
-            word_list.clear() # Проверка на дурака (другое слово)
-            for v in cur_obj_rus:
-                word_list.append(v[1])
-            print(*word_list)
-            word_list.clear()
-            cur_obj_rus.clear()
-        elif var == '##':
-            break
+    ran: int = 0
+    cur_obj_rus.clear()
+    for key, value in count_wr_tab.items():
+        ran = random.randint(1, value)
+        cur.execute(f'SELECT * FROM {key} WHERE rowid = {ran}')
+        cur_obj = cur.fetchall()
+        cur_obj_rus.append(cur_obj[0])
+        for v in cur_obj:
+            word_list.append(v[0])
+    return word_list
+
+def read_db_for_rus():
+    """Чтение БД для русских слов."""
+    word_list: list = list()
+    for v in cur_obj_rus:
+        word_list.append(v[1])
+    cur_obj_rus.clear()
+    return word_list
+
+            
