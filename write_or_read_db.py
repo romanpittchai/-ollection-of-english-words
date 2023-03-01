@@ -1,6 +1,9 @@
 import sqlite3
 import random
 import os
+from tkinter import filedialog
+
+
 
 def write_db_consol(value) -> None:
     """Запись из консоли прилагательного."""
@@ -24,35 +27,36 @@ def write_db_consol(value) -> None:
 
 def write_db_file(value):   
     """Запись в БД из txt файла."""
-    path_file: str = input('input file path: ')
-    if path_file == 'exit':
-        quit()
-    if os.path.exists(path_file):
-        data: list = list()
-        list_for_txt: list = list()
-        con = sqlite3.connect("engDB.db")
-        cur = con.cursor()
-        try:
-            file_text = open(path_file, "r")
-            while True:
-                file_text_r: str = file_text.readline()
-                if not file_text_r:
-                    break
-                file_text_r = tuple(file_text_r.split())
-                data.append(file_text_r)
-                list(file_text_r).clear()
-                file_text_r = ''
-            file_text.close()
-            cur.executemany(f'INSERT INTO {value} values (?, ?)', data)
-            con.commit()
-            con.close()
-        except (FileNotFoundError, IsADirectoryError) as error:
-            print(f'There is no such file or directory! {error}')
-            path_file: str = input('input file path: ')
-    elif not os.path.exists(path_file):
-        print('There is no such file or directory!')
-        path_file: str = input('input file path: ')
-
+    filetypes = (
+        ('Text files', '.txt'),
+        ('All files', '.*')
+    )
+    data: list = list()
+    list_for_txt: list = list()
+    con = sqlite3.connect("engDB.db")
+    cur = con.cursor()
+    try:
+        filepath_open = (filedialog.askopenfilename
+                         (filetypes=filetypes, defaultextension=''))
+        if filepath_open:
+            file_text = open(filepath_open, "r")
+        while True:
+            file_text_r: str = file_text.readline()
+            if not file_text_r:
+                break
+            file_text_r = tuple(file_text_r.split())
+            if len(file_text_r) != 2:
+                continue
+            data.append(file_text_r)
+            list(file_text_r).clear()
+            file_text_r = ''
+        file_text.close()
+        cur.executemany(f'INSERT INTO {value} values (?, ?)', data)
+        con.commit()
+        con.close()
+    except (FileNotFoundError, IsADirectoryError) as error:
+        print(f'There is no such file or directory! {error}')
+        
 
 
 def write_db() -> None:
