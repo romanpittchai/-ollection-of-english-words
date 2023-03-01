@@ -1,29 +1,31 @@
 import sqlite3
 import random
 import os
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 
+def info_for_db():
+    """Для оповещения, что запись в базе данных."""
+    title = "Service message"
+    massage = "Recorded in the DB!"
+    return messagebox.showinfo(title, massage)
 
-
-def write_db_consol(value) -> None:
+def write_db_consol(value, list_data) -> None:
     """Запись из консоли прилагательного."""
     data: list = list()
-    print('Вводите сначало английское слово,'
-          ' потом русское слово через пробел и'
-          ' и жмите Ввод. Для выхода введите ##')
-    while True:
-        word_for_db: str = input('-> ') # проверку на кол-во сделать и лишние знаки
-        if word_for_db != '##':
-            word_for_db = tuple(word_for_db.split())
-            data.append(word_for_db)
-        else:
-            break
-    con = sqlite3.connect("engDB.db")
-    cur = con.cursor()
-    cur.executemany(f'INSERT INTO {value} values (?, ?)', data)
-    con.commit()
-    con.close()
-        
+    for list_value in list_data:
+        tuple_value: tuple = tuple((list_value).split())
+        if len(tuple_value) != 2:
+            continue
+        data.append(tuple_value)
+    try:
+        con = sqlite3.connect("engDB.db")
+        cur = con.cursor()
+        cur.executemany(f'INSERT INTO {value} values (?, ?)', data)
+        con.commit()
+        con.close()
+    except sqlite3.Error as error:
+        print(error)
+    info_for_db()
 
 def write_db_file(value):   
     """Запись в БД из txt файла."""
@@ -33,55 +35,30 @@ def write_db_file(value):
     )
     data: list = list()
     list_for_txt: list = list()
-    con = sqlite3.connect("engDB.db")
-    cur = con.cursor()
     try:
-        filepath_open = (filedialog.askopenfilename
-                         (filetypes=filetypes, defaultextension=''))
-        if filepath_open:
-            file_text = open(filepath_open, "r")
-        while True:
-            file_text_r: str = file_text.readline()
-            if not file_text_r:
-                break
-            file_text_r = tuple(file_text_r.split())
-            if len(file_text_r) != 2:
-                continue
-            data.append(file_text_r)
-            list(file_text_r).clear()
-            file_text_r = ''
-        file_text.close()
-        cur.executemany(f'INSERT INTO {value} values (?, ?)', data)
-        con.commit()
-        con.close()
-    except (FileNotFoundError, IsADirectoryError) as error:
-        print(f'There is no such file or directory! {error}')
-        
+        con = sqlite3.connect("engDB.db")
+        cur = con.cursor()
+    except sqlite3.Error as error:
+        print(error)
+    filepath_open = (filedialog.askopenfilename
+                     (filetypes=filetypes, defaultextension=''))
+    if filepath_open:
+        file_text = open(filepath_open, "r")
+    while True:
+        file_text_r: str = file_text.readline()
+        if not file_text_r:
+            break
+        file_text_r = tuple(file_text_r.split())
+        if len(file_text_r) != 2:
+            continue
+        data.append(file_text_r)
+        list(file_text_r).clear()
+        file_text_r = ''
+    file_text.close()
+    cur.executemany(f'INSERT INTO {value} values (?, ?)', data)
+    con.commit()
+    con.close()
 
-
-def write_db() -> None:
-    """Выбор источника записи."""
-    print('Выберите источник данных.')
-    cons_or_txt: str = input('consol - 0, file(txt) - 1 ')
-    adjectives: str = 'adjectives'
-    verbs: str = 'verbs'
-    nouns: str = 'nouns'
-    if cons_or_txt == '0':
-        w_db: str = input('Что это будет(прил(0), сущ(1), гл(2)) ')
-        if w_db == '0':
-            write_db_consol(adjectives)
-        elif w_db == '1':
-            write_db_consol(nouns)
-        elif w_db == '2':
-            write_db_consol(verbs)
-    elif cons_or_txt == '1':
-        w_db: str = input('Что это будет(прил(0), сущ(1), гл(2)) ')
-        if w_db == '0':
-            write_db_file(adjectives)
-        elif w_db == '1':
-            write_db_file(nouns)
-        elif w_db == '2':
-            write_db_file(verbs)
         
     
 def read_db():

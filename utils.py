@@ -1,6 +1,6 @@
 import sqlite3
 import tkinter as tk
-from write_or_read_db import write_db, read_db
+from write_or_read_db import read_db
 
 
 def create_db() -> None:
@@ -19,8 +19,6 @@ def create_db() -> None:
 
 bol_list: list = list()
 
-def write_or_read_db() -> None:
-    """Выбор чтения или записи. Вызов соответствующей функции."""
     
 		
     

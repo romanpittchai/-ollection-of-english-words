@@ -81,8 +81,6 @@ class TextEditor(Frame):
         true_ver = BooleanVar()
         true_noun = BooleanVar()
         
-        
-        
         def write_db_from_file():
             """Вызов функции для записи в БД из файла. При выборе чекбокса."""
             bool_dict: dict = {'adjectives': true_adj.get(),
@@ -102,12 +100,14 @@ class TextEditor(Frame):
                                'verbs': true_ver.get(),
                                'nouns': true_noun.get()}
             keys: list = list(bool_dict.keys())
+            get_from_consol: str = self.txt_notes.get("1.0", "end-1c")
+            list_data: list = get_from_consol.splitlines()
             if bool_dict['adjectives']:
-                write_db_consol(keys[0])
+                write_db_consol(keys[0], list_data)
             elif bool_dict['verbs']:
-                write_db_consol(keys[1])
+                write_db_consol(keys[1], list_data)
             else:
-                write_db_consol(keys[2])
+                write_db_consol(keys[2], list_data)
         
         buttonFrame = Frame(self.master)
         buttonFrame.pack(fill = tk.Y, ipadx = 5, ipady = 5)
