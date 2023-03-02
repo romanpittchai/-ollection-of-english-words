@@ -4,13 +4,19 @@ import os
 from tkinter import filedialog, messagebox
 
 def info_for_db():
-    """Для оповещения, что запись в базе данных."""
+    """
+    To notify that a record is in the database.
+    Для оповещения, что запись в базе данных.
+    """
     title = "Service message"
     massage = "Recorded in the DB!"
     return messagebox.showinfo(title, massage)
 
 def write_db_consol(value, list_data) -> None:
-    """Запись из консоли прилагательного."""
+    """
+    Recording from the adjective console.
+    Запись из консоли прилагательного.
+    """
     data: list = list()
     for list_value in list_data:
         tuple_value: tuple = tuple((list_value).split())
@@ -27,8 +33,11 @@ def write_db_consol(value, list_data) -> None:
         print(error)
     info_for_db()
 
-def write_db_file(value):   
-    """Запись в БД из txt файла."""
+def write_db_file(value) -> None:   
+    """
+    Writing to the database from a txt file.
+    Запись в БД из txt файла.
+    """
     filetypes = (
         ('Text files', '.txt'),
         ('All files', '.*')
@@ -62,8 +71,11 @@ def write_db_file(value):
         
 cur_obj_rus: list = list()
 
-def read_db():
-    """Чтение БД для английских слов."""
+def read_db() -> list:
+    """
+    Reading the database for English words.
+    Чтение БД для английских слов.
+    """
     name_tab: list = list()
     count_wr_tab: dict = {}
     con = sqlite3.connect("engDB.db")
@@ -80,6 +92,8 @@ def read_db():
     ran: int = 0
     cur_obj_rus.clear()
     for key, value in count_wr_tab.items():
+        if not value:
+            continue
         ran = random.randint(1, value)
         cur.execute(f'SELECT * FROM {key} WHERE rowid = {ran}')
         cur_obj = cur.fetchall()
@@ -88,8 +102,11 @@ def read_db():
             word_list.append(v[0])
     return word_list
 
-def read_db_for_rus():
-    """Чтение БД для русских слов."""
+def read_db_for_rus() -> list:
+    """
+    Reading the database for Russian words.
+    Чтение БД для русских слов.
+    """
     word_list: list = list()
     for v in cur_obj_rus:
         word_list.append(v[1])

@@ -1,10 +1,14 @@
+import os
 import sqlite3
 import tkinter as tk
 from write_or_read_db import read_db
 
 
 def create_db() -> None:
-    """Для создания БД."""
+    """
+    To create a database.
+    Для создания БД.
+    """
     con = sqlite3.connect("engDB.db")
     cur = con.cursor()
     table_db: dict = {
@@ -14,8 +18,17 @@ def create_db() -> None:
     }
     for key, value in table_db.items():
         column_eng, column_rus = value
-        cur.execute(f'CREATE TABLE {key} ({column_eng} NOT NULL, {column_rus} NOT NULL)')
+        cur.execute(f'CREATE TABLE {key} ({column_eng} '
+                    f'NOT NULL, {column_rus} NOT NULL)')
     con.close()
 
     
-    
+def connect_sql() -> None:
+    """
+    Checking for the presence of a database.
+    Creating, reading or writing to the database.
+    Проверка на наличие БД.
+    Создание, чтение или запись в БД.
+    """
+    if not os.path.exists("engDB.db"):
+        create_db()

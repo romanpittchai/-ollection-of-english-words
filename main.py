@@ -2,8 +2,11 @@ import tkinter as tk
 from tkinter import (Frame, Menu, Text, Scrollbar,
                      filedialog, messagebox, Tk, BooleanVar)
 
-from main_logic import connect_sql
-from write_or_read_db import write_db_file, write_db_consol, read_db, read_db_for_rus
+from utils import connect_sql
+from write_or_read_db import (write_db_file,
+                              write_db_consol,
+                              read_db,
+                              read_db_for_rus)
 
 
 class TextEditor(Frame):
@@ -12,7 +15,10 @@ class TextEditor(Frame):
         self.up_menu()
     
     def up_menu(self) -> None:
-        """ Basic widgets. """
+        """
+        Basic widgets.
+        Базовые виджеты.
+        """
         self.master.title("SimplyApp")
         main_menu = Menu(self)
         self.master.config(menu=main_menu)
@@ -20,30 +26,36 @@ class TextEditor(Frame):
         file_menu_correction = Menu(main_menu, tearoff=0)
         mouse_menu = Menu(main_menu, tearoff=0)
         file_menu_data = Menu(main_menu, tearoff=0)
-        file_menu.add_command(label="New file", command=self.new_file,
-                              accelerator="Ctrl+N")
+        file_menu.add_command(label="New file", 
+                             command=self.new_file,
+                             accelerator="Ctrl+N")
         file_menu.add_command(label="Open file",
-                              command=self.select_and_open_file,
-                              accelerator="Ctrl+O")
+                             command=self.select_and_open_file,
+                             accelerator="Ctrl+O")
         file_menu.add_separator()
-        file_menu.add_command(label="Save", command=self.save_file,
-                              accelerator="Ctrl+S")
-        file_menu.add_command(label="Save as", command=self.save_as_file,
-                              accelerator="Ctrl+Shift+S")
+        file_menu.add_command(label="Save",
+                             command=self.save_file,
+                             accelerator="Ctrl+S")
+        file_menu.add_command(label="Save as",
+                             command=self.save_as_file,
+                             accelerator="Ctrl+Shift+S")
         file_menu.add_separator()
-        file_menu.add_command(label="Exit", command=self.exit_from_editor,
-                              accelerator="Ctrl+Q")
-        file_menu_correction.add_command(label="Cut", command=self.cut_text,
-                                         accelerator="Ctrl+X")
-        file_menu_correction.add_command(label="Copy", command=self.copy_text,
-                                         accelerator="Ctrl+C")
+        file_menu.add_command(label="Exit",
+                             command=self.exit_from_editor,
+                             accelerator="Ctrl+Q")
+        file_menu_correction.add_command(label="Cut",
+                                        command=self.cut_text,
+                                        accelerator="Ctrl+X")
+        file_menu_correction.add_command(label="Copy",
+                                        command=self.copy_text,
+                                        accelerator="Ctrl+C")
         file_menu_correction.add_separator()
         file_menu_correction.add_command(label="Paste",
-                                         command=self.paste_text,
-                                         accelerator="Ctrl+V")
+                                        command=self.paste_text,
+                                        accelerator="Ctrl+V")
         file_menu_correction.add_command(label="Select text",
-                                         command=self.select_text,
-                                         accelerator="Ctrl+A")
+                                        command=self.select_text,
+                                        accelerator="Ctrl+A")
         
 
         mouse_menu.add_command(label="Save", command=self.save_file)
@@ -56,8 +68,11 @@ class TextEditor(Frame):
         
         
 
-        def mouse_popup(event):
-            """docstring"""
+        def mouse_popup(event) -> None:
+            """
+            The initializer is a mouse key.
+            Инициализатор клавишь для мыши.
+            """
             try:
                 mouse_menu.tk_popup(event.x_root, event.y_root)
             finally:
@@ -66,13 +81,15 @@ class TextEditor(Frame):
         self.bind_all("<Button-3>", mouse_popup)
 
         main_menu.add_cascade(label="File", menu=file_menu)
-        main_menu.add_cascade(label="Сorrection", menu=file_menu_correction)
+        main_menu.add_cascade(label="Сorrection",
+                              menu=file_menu_correction)
         
 
         txtFrame = Frame(self.master)
         txtFrame.pack(side="bottom", fill="both", expand=True)
         self.txt_notes = Text(master=txtFrame, wrap="word")
-        scrollbar = Scrollbar(master=txtFrame, command=self.txt_notes.yview)
+        scrollbar = Scrollbar(master=txtFrame,
+                              command=self.txt_notes.yview)
         self.txt_notes['yscrollcommand'] = scrollbar.set
         scrollbar.pack(side="right", fill="y")
         self.txt_notes.pack(side="bottom", fill="both", expand=True)
@@ -81,8 +98,14 @@ class TextEditor(Frame):
         true_ver = BooleanVar()
         true_noun = BooleanVar()
         
-        def write_db_from_file():
-            """Вызов функции для записи в БД из файла. При выборе чекбокса."""
+        def write_db_from_file() -> None:
+            """
+            Calling a function to write
+            to the database from a file.
+            When selecting the checkbox.
+            Вызов функции для записи в БД из файла.
+            При выборе чекбокса.
+            """
             bool_dict: dict = {'adjectives': true_adj.get(),
                                'verbs': true_ver.get(),
                                'nouns': true_noun.get()}
@@ -94,8 +117,14 @@ class TextEditor(Frame):
             else:
                 write_db_file(keys[2])
                 
-        def write_db_from_consol():
-            """Вызов функции записи в БД из консоли приложения. При выборе чекбокса."""
+        def write_db_from_consol() -> None:
+            """
+            Calling the write function to
+            the database from application consoles.
+            When selecting the checkbox.
+            Вызов функции записи в БД из
+            консоли приложения. При выборе чекбокса.
+            """
             bool_dict: dict = {'adjectives': true_adj.get(),
                                'verbs': true_ver.get(),
                                'nouns': true_noun.get()}
@@ -109,16 +138,29 @@ class TextEditor(Frame):
             else:
                 write_db_consol(keys[2], list_data)
         
-        def read_db_eng():
-            """Чтение из БД аглицких словес."""
+        def read_db_eng() -> None:
+            """
+            Reading from the database (English).
+            Чтение из БД(английский).
+            """
             list_from_bd: list = read_db()
-            index_cursor = self.txt_notes.index('insert')
-            self.txt_notes.insert(index_cursor, list_from_bd)
-            index_cursor = self.txt_notes.index('insert')
-            self.txt_notes.insert(index_cursor, '\n')
+            if len(list_from_bd) == 0:
+                pass
+            else:
+                index_cursor = self.txt_notes.index('insert')
+                self.txt_notes.insert(index_cursor, list_from_bd)
+                index_cursor = self.txt_notes.index('insert')
+                self.txt_notes.insert(index_cursor, '\n')
             
-        def read_db_rus():
-            """Чтение из БД русских слов."""
+        def read_db_rus() -> None:
+            """
+            Reading from the database (Russian).
+            If the function of reading English
+            words from the database was called before.
+            Чтение из БД(Русский).
+            Если прежде вызвана функция чтения
+            из БД английских слов.
+            """
             list_from_bd: list = read_db_for_rus()
             if len(list_from_bd) == 0:
                 pass
@@ -152,8 +194,11 @@ class TextEditor(Frame):
         chBoxFrame = Frame(self.master)
         chBoxFrame.pack(fill = tk.Y)
         
-        def ckbox_adjectives():
-            """Выбор чек-бокса с прилагательным."""
+        def ckbox_adjectives() -> None:
+            """
+            Selecting a checkbox with an adjective.
+            Выбор чек-бокса с прилагательным.
+            """
             true_or_false: bool = true_adj.get()
             if true_or_false:
                 self.ck_box_2.configure(state=tk.DISABLED)
@@ -172,8 +217,11 @@ class TextEditor(Frame):
                 self.btn_sub_4.configure(state=tk.DISABLED)
                 self.btn_sub_clear.configure(state=tk.NORMAL)
         
-        def ckbox_verbs():
-            """docstring"""
+        def ckbox_verbs() -> None:
+            """
+            Selecting a checkbox with a verb.
+            Выбор чек-бокса с глаголом.
+            """
             true_or_false: bool = true_ver.get()
             
             if true_or_false:
@@ -193,8 +241,11 @@ class TextEditor(Frame):
                 self.btn_sub_4.configure(state=tk.DISABLED)
                 self.btn_sub_clear.configure(state=tk.NORMAL)
                 
-        def ckbox_nouns():
-            """docstring"""
+        def ckbox_nouns() -> None:
+            """
+            Selecting a checkbox with a noun.
+            Выбор чек-бокса с существительным.
+            """
             true_or_false: bool = true_noun.get()
             if true_or_false:
                 self.ck_box_1.configure(state=tk.DISABLED)
@@ -229,8 +280,12 @@ class TextEditor(Frame):
                                        variable = true_noun)
         self.ck_box_3.pack(side = tk.RIGHT, ipadx = 20);
         
-        def check_chbox():
-            """Блокировка кнопок записи в БД."""
+        def check_chbox() -> None:
+            """
+            Locking buttons and checkboxes
+            of the database entry.
+            Блокировка кнопок и чек-боксов записи в БД.
+            """
             bool_list: list = [true_adj.get(), true_ver.get(), true_noun.get()]
             if all([bool_list]):
                 self.ck_box_1.configure(state=tk.NORMAL)
@@ -242,8 +297,11 @@ class TextEditor(Frame):
                 self.btn_sub_4.configure(state=tk.DISABLED)
         check_chbox()
         
-        def clear():
-            """Очистить текст."""
+        def clear() -> None:
+            """
+            Clear the text field.
+            Очистить текстовое поле.
+            """
             self.txt_notes.delete("1.0", "end-1c")
             
         buttonFrameTwo = Frame(self.master)
@@ -253,8 +311,11 @@ class TextEditor(Frame):
                                    command = clear);
         self.btn_sub_clear.pack(side = tk.RIGHT, ipadx = 20);
         
-        def key_non_shift(event):
-            """docstring"""
+        def key_non_shift(event) -> None:
+            """
+            Initializer of some keys (see codes).
+            Инициализатор некоторых клавишь(см. коды).
+            """
             keys_code = {
                 (79, 32): self.select_and_open_file,
                 (78, 57): self.new_file,
@@ -268,8 +329,11 @@ class TextEditor(Frame):
 
         self.bind_all("<Control-KeyPress>", key_non_shift)
 
-        def keypress_with_shift(event):
-            """docstring"""
+        def keypress_with_shift(event) -> None:
+            """
+            Initializer of some keys (see codes).
+            Инициализатор некоторых клавишь(см. коды).
+            """
             if event.keycode == 83 or event.keycode == 115:
                 self.save_as_file()
 
@@ -285,20 +349,30 @@ class TextEditor(Frame):
         self.filepath_open = None
 
     def exit_from_editor(self) -> None:
-        """ Exiting the application. """
+        """
+        Exiting the application.
+        Выход из приложения.
+        """
         self.master.title("SimplyApp - closing")
         self.master.destroy()
 
     def info(self):
-        """ For the function 'askyesno'. """
+        """
+        For the function 'askyesno'.
+        Для функции 'askyesno'.
+        """
         title = "Save"
         massage = "Save the file?"
         return messagebox.askyesno(title, massage)
 
     def select_and_open_file(self) -> None:
-        """ Selecting and opening a file. """
+        """
+        Selecting and opening a file.
+        Выбор и открытие файла.
+        """
         self.filepath_open = (filedialog.askopenfilename
-                              (filetypes=self.filetypes, defaultextension=''))
+                             (filetypes=self.filetypes,
+                             defaultextension=''))
         self.master.title(f"SimplyApp - {self.filepath_open}")
         if self.filepath_open:
             with open(self.filepath_open, "r") as outFile:
@@ -307,11 +381,17 @@ class TextEditor(Frame):
                 outFile.close()
 
     def local(self) -> None:
-        """ To reset the variable. """
+        """
+        To reset the variable.
+        Чтобы сбросить переменную.
+        """
         return None
 
     def new_file(self) -> None:
-        """ Creating a new text field. """
+        """
+        Creating a new text field.
+        Создание нового текстового поля.
+        """
         if self.filepath_open:
             flag = self.info()
             if flag:
@@ -329,10 +409,13 @@ class TextEditor(Frame):
         self.master.title("SimplyApp - New")
 
     def save_as_file(self) -> None:
-        """ The 'save as...' function. """
+        """
+        The 'save as...' function.
+        Функция "сохранить как...".
+        """
         self.filepath_open = (filedialog.asksaveasfilename
-                              (filetypes=self.filetypes,
-                               defaultextension='initialfile'))
+                             (filetypes=self.filetypes,
+                             defaultextension='initialfile'))
         if self.filepath_open:
             self.master.title(f"SimplyApp - {self.filepath_open}")
             with open(self.filepath_open, "w") as inFile:
@@ -340,7 +423,10 @@ class TextEditor(Frame):
                 inFile.close()
 
     def save_file(self) -> None:
-        """ The 'save' function. """
+        """
+        The 'save' function.
+        Функция "сохранить".
+        """
         if self.filepath_open:
             self.master.title(f"SimplyApp - {self.filepath_open}")
             with open(self.filepath_open, "w") as outInfile:
@@ -350,7 +436,10 @@ class TextEditor(Frame):
             self.save_as_file()
 
     def func_for_copy_cut(self) -> bool:
-        """ General function for copying and cutting. """
+        """
+        General function for copying and cutting.
+        Общая функция для копирования и резки.
+        """
         self.clipboard_append('')
         self.clipboard_clear()
         self.clipboard_append(self.txt_notes.selection_get())
@@ -360,26 +449,42 @@ class TextEditor(Frame):
         self.txt_notes.selection_clear()
 
     def cut_text(self) -> None:
-        """ Cut text. """
+        """
+        Cut text.
+        Вырезать текст.
+        """
         self.func_for_copy_cut()
         self.txt_notes.delete(self.index_first, self.index_last)
 
     def copy_text(self) -> None:
-        """ Copy text. """
+        """
+        Copy text.
+        Копировать текст.
+        """
         self.func_for_copy_cut()
 
     def paste_text(self):
-        """ Paste text. """
+        """
+        Paste text.
+        Вставить текст.
+        """
         index_cursor = self.txt_notes.index('insert')
         self.txt_notes.insert(index_cursor, self.clipboard_get())
 
     def select_text(self) -> None:
-        """ Select text. """
+        """
+        Select text.
+        Выбрать текст.
+        """
         self.txt_notes.tag_add("sel", "1.0", "end-1c")
 
     connect_sql()
 
 def main():
+    """
+    Main function.
+    Главная функция.
+    """
     root = Tk()
     TextEditor(root).pack()
     root.mainloop()
