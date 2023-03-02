@@ -24,9 +24,7 @@ def create_db() -> None:
 def connect_sql() -> None:
     """
     Checking for the presence of a database.
-    Creating, reading or writing to the database.
     Проверка на наличие БД.
-    Создание, чтение или запись в БД.
     """
     if not os.path.exists("engDB.db"):
         create_db()
